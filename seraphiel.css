@@ -1,0 +1,442 @@
+:root {
+    --bg-color: #0d0d0d;
+    --book-width: 600px;
+    /* Single page width */
+    --book-height: 800px;
+    --paper-color: #f4e4bc;
+    --paper-texture: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.05"/></svg>');
+    --ink-color: #2b2b2b;
+    --accent-ink: #8b0000;
+    /* Dried blood / red ink */
+    --cover-color: #3e2723;
+    --gold-foil: #d4af37;
+    --font-main: 'Crimson Text', serif;
+    --font-hand: 'Dancing Script', cursive;
+    --font-lock: 'Cinzel', serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--ink-color);
+    font-family: var(--font-main);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* --- LOCK SCREEN --- */
+#lock-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #111;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 1s cubic-bezier(0.6, -0.28, 0.735, 0.045), opacity 0.5s;
+}
+
+#lock-screen.unlocked {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.lock-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+.lock-mechanism {
+    position: relative;
+    width: 300px;
+    height: 380px;
+    background: linear-gradient(135deg, #2c3e50, #000);
+    border-radius: 20px;
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.8),
+        inset 0 2px 5px rgba(255, 255, 255, 0.1),
+        inset 0 -5px 10px rgba(0, 0, 0, 0.5);
+    border: 4px solid #4a5d6e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.shackle {
+    position: absolute;
+    top: -80px;
+    width: 180px;
+    height: 120px;
+    border: 25px solid #bdc3c7;
+    border-bottom: none;
+    border-radius: 90px 90px 0 0;
+    z-index: -1;
+    background: radial-gradient(circle at 30% 30%, #ecf0f1, #7f8c8d);
+    transition: transform 0.5s ease-out;
+}
+
+#lock-screen.unlocking .shackle {
+    transform: translateY(-40px);
+}
+
+.lock-body {
+    width: 80%;
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.keyhole-cover {
+    width: 40px;
+    height: 40px;
+    background: #1a1a1a;
+    border-radius: 50%;
+    box-shadow: inset 0 2px 5px #000;
+    margin-bottom: 10px;
+    border: 2px solid #555;
+}
+
+.combination-row {
+    display: flex;
+    gap: 15px;
+    background: #000;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 1);
+    border: 2px solid #333;
+}
+
+.dial-container {
+    position: relative;
+    width: 40px;
+    height: 60px;
+    background: linear-gradient(to bottom, #bdc3c7, #ecf0f1, #bdc3c7);
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+    border: 1px solid #7f8c8d;
+}
+
+.dial-input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    text-align: center;
+    font-size: 2em;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: #2c3e50;
+    text-transform: uppercase;
+    outline: none;
+    cursor: pointer;
+}
+
+/* Scratches/Texture on Metal */
+.dial-ring {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+}
+
+.lock-instruction {
+    color: #bdc3c7;
+    font-family: var(--font-lock);
+    letter-spacing: 3px;
+    font-size: 1.2em;
+    text-shadow: 0 2px 4px #000;
+    text-transform: uppercase;
+}
+
+.error-shake {
+    animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+@keyframes shake {
+
+    10%,
+    90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+
+    20%,
+    80% {
+        transform: translate3d(2px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translate3d(-4px, 0, 0);
+    }
+
+    40%,
+    60% {
+        transform: translate3d(4px, 0, 0);
+    }
+}
+
+/* --- BOOK SCENE --- */
+#journal-scene {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 2000px;
+    opacity: 0;
+    transition: opacity 2s ease;
+    background: radial-gradient(circle, #2a2a2a 0%, #000 100%);
+}
+
+#journal-scene.visible {
+    opacity: 1;
+}
+
+.book-container {
+    position: relative;
+    width: calc(var(--book-width) * 2);
+    height: var(--book-height);
+    margin-left: 50px;
+    /* Offset for tabs */
+}
+
+.book {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+/* Pages */
+.page {
+    position: absolute;
+    width: var(--book-width);
+    height: 100%;
+    top: 0;
+    right: 0;
+    /* All pages start on the right stack */
+    transform-origin: left center;
+    transform-style: preserve-3d;
+    transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+    background-color: var(--paper-color);
+    background-image: var(--paper-texture);
+    /* Subtle Paper Depth */
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    /* Dynamic via JS */
+}
+
+.page.flipped {
+    transform: rotateY(-180deg);
+}
+
+/* Page Sides */
+.page-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    padding: 60px 50px;
+    box-sizing: border-box;
+    overflow: hidden;
+    /* No scrolling */
+
+    /* Uneven edges */
+    /* border-radius: 2px 5px 5px 2px; */
+    box-shadow: inset 0 0 30px rgba(139, 69, 19, 0.1);
+}
+
+.page-face.front {
+    /* Right page content */
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0) 95%, rgba(0, 0, 0, 0.1) 100%);
+}
+
+.page-face.back {
+    /* Left page content */
+    transform: rotateY(180deg);
+    background: linear-gradient(to left, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0) 95%, rgba(0, 0, 0, 0.1) 100%);
+}
+
+/* --- TABS --- */
+.tabs-container {
+    position: absolute;
+    right: -40px;
+    /* Stick out from right side of CLOSED book, or right side of open spread? Let's attach to back cover essentially */
+    top: 10%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    z-index: 0;
+    /* Behind book */
+}
+
+/* Actually, tabs on an open book are usually visible on the side edges of the pages. 
+   Simplification: Tabs attached to the right edge of the book container */
+.tab {
+    width: 80px;
+    height: 40px;
+    background: #5d4037;
+    color: #e0e0e0;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    font-family: var(--font-lock);
+    font-size: 0.8em;
+    cursor: pointer;
+    border-radius: 0 5px 5px 0;
+    transform: translateX(-10px);
+    transition: transform 0.3s;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    border: 1px solid #3e2723;
+}
+
+.tab:hover {
+    transform: translateX(0);
+    background: #795548;
+}
+
+.tab[data-active="true"] {
+    background: #8d6e63;
+    transform: translateX(5px);
+    color: #fff;
+    font-weight: bold;
+}
+
+/* --- CONTENT STYLES --- */
+h1,
+h2,
+h3 {
+    font-family: var(--font-lock);
+    color: #2c3e50;
+    margin-top: 0;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+    padding-bottom: 10px;
+    text-transform: uppercase;
+}
+
+h1 {
+    font-size: 2.2em;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+h2 {
+    font-size: 1.6em;
+    margin-bottom: 20px;
+    color: var(--accent-ink);
+    border-color: var(--accent-ink);
+}
+
+h3 {
+    font-size: 1.2em;
+    font-family: var(--font-main);
+    font-weight: bold;
+    font-style: italic;
+}
+
+p {
+    font-size: 1.15em;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    text-align: justify;
+}
+
+.handwritten-note {
+    font-family: var(--font-hand);
+    color: var(--accent-ink);
+    font-size: 1.4em;
+    transform: rotate(-2deg);
+    margin: 20px 0;
+    opacity: 0.9;
+}
+
+.ink-stain {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 70%);
+    opacity: 0.1;
+    border-radius: 50%;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+}
+
+/* Formatting from Markdown/Text */
+blockquote {
+    border-left: 3px solid var(--accent-ink);
+    margin: 20px 0;
+    padding-left: 20px;
+    color: #555;
+    font-style: italic;
+}
+
+.page-num {
+    position: absolute;
+    bottom: 20px;
+    font-family: var(--font-lock);
+    font-size: 0.9em;
+    color: #7f8c8d;
+}
+
+.page-face.front .page-num {
+    right: 30px;
+}
+
+.page-face.back .page-num {
+    left: 30px;
+}
+
+/* Special Text Styles */
+.crossed-out {
+    text-decoration: line-through;
+    color: #777;
+    text-decoration-color: var(--ink-color);
+}
+
+.emphasis {
+    font-weight: bold;
+}
+
+/* Cover Page Style */
+.cover-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    border: 5px double var(--gold-foil);
+    padding: 40px;
+    text-align: center;
+}
+
+.cover-title {
+    font-size: 3em;
+    color: var(--ink-color);
+    letter-spacing: 5px;
+    margin-bottom: 20px;
+}
+
+.cover-subtitle {
+    font-size: 1.5em;
+    color: var(--accent-ink);
+    font-family: var(--font-hand);
+}

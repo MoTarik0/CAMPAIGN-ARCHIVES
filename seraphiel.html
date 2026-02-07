@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journal of Seraphiel Valerion</title>
+    <link rel="stylesheet" href="seraphiel.css">
+    <!-- handwritten / serif fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Dancing+Script:wght@400;700&family=Cinzel:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- MECHANICAL LOCK SCREEN -->
+    <div id="lock-screen">
+        <div class="lock-container">
+            <div class="lock-mechanism">
+                <div class="shackle"></div>
+                <div class="lock-body">
+                    <div class="keyhole-cover"></div>
+                    <div class="combination-row">
+                        <!-- 4 Slot Code: BOND -->
+                        <div class="dial-container">
+                            <input type="text" class="dial-input" maxlength="1" data-index="0" autocomplete="off">
+                            <div class="dial-ring"></div>
+                        </div>
+                        <div class="dial-container">
+                            <input type="text" class="dial-input" maxlength="1" data-index="1" autocomplete="off">
+                            <div class="dial-ring"></div>
+                        </div>
+                        <div class="dial-container">
+                            <input type="text" class="dial-input" maxlength="1" data-index="2" autocomplete="off">
+                            <div class="dial-ring"></div>
+                        </div>
+                        <div class="dial-container">
+                            <input type="text" class="dial-input" maxlength="1" data-index="3" autocomplete="off">
+                            <div class="dial-ring"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="lock-instruction">"Peace is bond."</div>
+        </div>
+    </div>
+
+    <!-- MAIN JOURNAL CONTAINER -->
+    <div id="journal-scene">
+        <div class="book-container">
+            <div class="book" id="book">
+                <!-- Pages generated via JS -->
+            </div>
+
+            <!-- TABS -->
+            <div class="tabs-container">
+                <div class="tab" data-section="cover" onclick="Book.goToSection('cover')">COVER</div>
+                <div class="tab" data-section="intro" onclick="Book.goToSection('intro')">IDENTITY</div>
+                <div class="tab" data-section="people" onclick="Book.goToSection('people')">PEOPLE</div>
+                <div class="tab" data-section="ravenwood" onclick="Book.goToSection('ravenwood')">JOURNEY</div>
+                <div class="tab" data-section="journal" onclick="Book.goToSection('journal')">THOUGHTS</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="seraphiel.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNIT DL-300 // MEMORY ARCHIVE</title>
+    <link rel="stylesheet" href="zane.css">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- BOOT / LOADING OVERLAY -->
+    <div id="boot-screen">
+        <div class="boot-container">
+            <div class="boot-line" id="line1">> INITIALIZING_MEMORY_CORE...</div>
+            <div class="boot-line" id="line2">> SYNCING_IDENTITY_FRAGMENTS...</div>
+            <div class="boot-line" id="line3">> LOADING_ARCHIVAL_DATA...</div>
+
+            <!-- Interrupt Lines -->
+            <div class="boot-line error hidden" id="int-line1">>> SECURITY_INTERRUPT_DETECTED</div>
+            <div class="boot-line error hidden" id="int-line2">>> MEMORY_ACCESS_REQUIRES_AUTHORIZATION</div>
+
+            <div class="loader-bar">
+                <div class="bar-fill"></div>
+            </div>
+            <div class="loader-text">0%</div>
+            <div id="identity-confirmed" class="identity-confirmed" data-text='IDENTITY_CONFIRMED: "ZANE"'></div>
+        </div>
+    </div>
+
+    <!-- SECURITY OVERLAY -->
+    <div id="security-overlay">
+        <div class="security-box">
+            <h1 class="security-title">ENTER AUTHORIZATION CODE</h1>
+            <p class="security-msg">AWAITING VALID KEY SEQUENCE</p>
+            <div class="input-group">
+                <input type="password" id="soul-key" placeholder="" autocomplete="off">
+                <button id="unlock-btn">CONFIRM</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAILURE SCREEN (SKULL) -->
+    <div id="failure-screen">
+        <div class="crt-noise"></div>
+        <div class="skull-container">
+            <canvas id="skull-canvas" width="400" height="400"></canvas>
+            <div class="failure-text">ACCESS DENIED</div>
+            <div class="failure-sub">MEMORY CORE SEALED</div>
+        </div>
+    </div>
+
+    <!-- SUCCESS EMOJI OVERLAY -->
+    <div id="success-overlay" class="hidden">
+        <div class="emoji-container">🙂</div>
+    </div>
+
+    <div class="monitor-overlay"></div>
+    <div class="scanline"></div>
+
+    <main class="interface-container hidden" id="main-interface">
+        <!-- HUD HEADER -->
+        <header class="hud-header">
+            <div class="hud-left">
+                <span class="label">UNIT:</span> <span class="value">DL-300 "ZANE"</span><br>
+                <span class="label">CLASS:</span> <span class="value">ARMORER [ARTIFICER]</span>
+            </div>
+            <div class="hud-center">
+                <div class="status-indicator active">CORE: ONLINE</div>
+                <div class="status-indicator warning">MEMORY: FRAGMENTED</div>
+            </div>
+            <div class="hud-right">
+                <div class="time-readout" id="clock">00:00:00</div>
+                <div class="integrity-bar">
+                    <div class="fill" style="width: 87%;"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT SCROLL -->
+        <div class="memory-stream">
+
+            <!-- INTRO -->
+            <section class="memory-block" id="mem-init">
+                <div class="block-header">
+                    <span class="block-id">LOG_001.07</span>
+                    <span class="block-title" data-text="INITIALIZATION">INITIALIZATION</span>
+                </div>
+                <div class="block-content">
+                    <p class="log-text">
+                        I stand.
+                    </p>
+                    <p class="log-text">
+                        I do not rise. I do not open my eyes. I simply become aware that I already <span
+                            class="emphasis">exist</span>.
+                    </p>
+                    <p class="log-text">
+                        Cold metal presses against my back. It is a stone table, cracked down the middle, run through
+                        with old restraints that have long since rusted into useless shapes. Dim light flickers above
+                        me. It is not from magic, nor machinery still working, but from exposed crystals slowly dying in
+                        their sockets.
+                    </p>
+                    <div class="visual-placeholder" data-type="schematic">
+                        [DATA CORRUPTED: VISUAL INPUT RECONSTRUCTION PENDING]
+                    </div>
+                    <p class="log-text">
+                        The laboratory is silent.
+                    </p>
+                </div>
+            </section>
+
+            <!-- AWAKENING -->
+            <section class="memory-block hidden-block" id="mem-body">
+                <div class="block-header">
+                    <span class="block-id">LOG_001.09</span>
+                    <span class="block-title" data-text="SELF_DIAGNOSTIC">SELF_DIAGNOSTIC</span>
+                </div>
+                <div class="block-content">
+                    <p class="log-text">
+                        I look down at myself.
+                    </p>
+                    <p class="log-text">
+                        Metal limbs. Articulated joints. Armor plates fitted with deliberate care. Not improvised. Not
+                        random. My body is a design, layered and modular, meant to change, meant to endure.
+                    </p>
+                    <p class="log-text system-query">
+                        > QUERY: IDENTITY?<br>
+                        > ERROR: NOT FOUND.<br>
+                        > QUERY: PURPOSE?<br>
+                        > ERROR: DATA UNAVAILABLE.
+                    </p>
+                    <p class="log-text">
+                        I step off the table. My weight echoes across the room. I notice I am not alone.
+                    </p>
+                </div>
+            </section>
+
+            <!-- THE DEAD -->
+            <section class="memory-block hidden-block" id="mem-dead">
+                <div class="block-header">
+                    <span class="block-id">LOG_001.12</span>
+                    <span class="block-title" data-text="NECROPOLIS">NECROPOLIS</span>
+                </div>
+                <div class="block-content">
+                    <p class="log-text">
+                        Skeletons.
+                    </p>
+                    <p class="log-text">
+                        Human and humanoid remains lie scattered throughout the laboratory. Some slump against walls.
+                        Some collapse near broken consoles. Others lie face-down, as if they fall while running.
+                    </p>
+                    <p class="log-text">
+                        I approach the nearest one carefully. Its skull tilts upward, jaw half open. I crouch in front
+                        of it, studying it the way one studies a tool whose purpose is unclear.
+                    </p>
+                    <p class="log-text dialogue">
+                        <span class="dl-tag">DL-300:</span> “...Did you make me?”
+                    </p>
+                    <p class="log-text">
+                        The words leave my mouth. I have not practiced speaking. The voice comes, measured and even. The
+                        skeleton does not answer.
+                    </p>
+                </div>
+            </section>
+
+            <!-- EXPLORATION -->
+            <section class="memory-block hidden-block" id="mem-explore">
+                <div class="block-header">
+                    <span class="block-id">LOG_001.15</span>
+                    <span class="block-title" data-text="RECOGNITION">RECOGNITION</span>
+                </div>
+                <div class="block-content">
+                    <p class="log-text">
+                        I move deeper into the lab. Symbols carve themselves into walls and floors, some arcane, some
+                        mechanical. Many match faint engravings beneath my armor plating.
+                    </p>
+                    <div class="glitch-text" data-text="RECOGNITION WITHOUT MEMORY">RECOGNITION WITHOUT MEMORY</div>
+                    <p class="log-text">
+                        Fragments of information surface in my mind without context. Tactical calculations. Defensive
+                        projections. Armor configurations. I understand how to reinforce myself, how to become heavier,
+                        faster, more dangerous.
+                    </p>
+                    <p class="log-text system-query">
+                        > PROTOCOLS: ACTIVE.<br>
+                        > CONTEXT: MISSING.
+                    </p>
+                </div>
+            </section>
+
+            <!-- THE NAME -->
+            <section class="memory-block hidden-block" id="mem-name">
+                <div class="block-header">
+                    <span class="block-id">LOG_001.19</span>
+                    <span class="block-title" data-text="IDENTITY_DEVIATION">IDENTITY_DEVIATION</span>
+                </div>
+                <div class="block-content">
+                    <p class="log-text">
+                        In a small, cluttered alcove, I find a personal datapad, powered down but preserved. Beside it
+                        is a handwritten note, the ink faded but legible.
+                    </p>
+                    <div class="visual-placeholder note" data-type="artifact">
+                        "DL-300 is too cold. The Z-Class prototypes have more 'spark' than the others. I call him Zane.
+                        If he ever wakes up, I hope he likes it."
+                    </div>
+                    <p class="log-text">
+                        <em>Zane.</em>
+                    </p>
+                    <p class="log-text">
+                        The word resonates in my core processor in a way 'DL-300' does not. A designation names a <span
+                            class="emphasis">machine</span>. A name names a <span class="emphasis">being</span>.
+                    </p>
+                    <p class="log-text dialogue">
+                        <span class="dl-tag">DL-300:</span> “Zane.”
+                    </p>
+                    <p class="log-text system-query">
+                        > UPDATING USER PROFILE...<br>
+                        > DESIGNATION OVERRIDE: ZANE.
+                    </p>
+                </div>
+            </section>
+
+            <!-- THE BADGE/NECKLACE -->
+            <section class="memory-block hidden-block" id="mem-exit">
+                <div class="block-header">
+                    <span class="block-id">LOG_001.22</span>
+                    <span class="block-title" data-text="DIRECTIVE">DIRECTIVE</span>
+                </div>
+                <div class="block-content">
+                    <p class="log-text">
+                        Near the exit, I find a final skeleton, fallen as if reaching for the door. A metallic object
+                        lies entangled in its ribs—a heavy necklace, miraculously uncorroded.
+                    </p>
+                    <p class="log-text">
+                        I pull it free. The metal feels warm against my sensors.
+                        The necklace has a symbol on it - I can identify the type of bird; it's an owl.
+                    </p>
+                    <div class="visual-placeholder canvas-container" data-type="artifact">
+                        <canvas id="necklace-canvas" width="400" height="400"></canvas>
+                        <div class="loader-text">LOADING ARTIFACT SCANS...</div>
+                    </div>
+                    <p class="log-text">
+                        I look down at my own chest plate. Beneath the layers of ablative armor, the same symbol is
+                        etched into my core chassis.
+                    </p>
+                    <p class="log-text dialogue">
+                        <span class="dl-tag">DL-300:</span> “You carried this. You fell reaching for the light. I will
+                        finish the walk for you.”
+                    </p>
+                    <p class="log-text">
+                        I fasten the necklace around my neck. It clinks against my plating—a promise. I do not know what
+                        the symbol means, but I will find out.
+                    </p>
+                </div>
+            </section>
+
+            <!-- SAFE MODE & LOCKED MODS -->
+            <section class="memory-block restricted-sector hidden-block" id="mem-restricted">
+                <div class="block-header alert">
+                    <span class="block-id">SYS_LOG_999.00</span>
+                    <span class="block-title text-danger" data-text="SECURITY_ALERT">SECURITY_ALERT</span>
+                </div>
+                <div class="block-content">
+                    <p class="log-text system-query danger">
+                        > WARNING: COMBAT SUBROUTINES DETECTED.<br>
+                        > STATUS: RESTRICTED.<br>
+                        > PROTOCOL: SAFE_MODE_ACTIVE.<br>
+                        > INHIBITOR: ON.
+                    </p>
+                    <p class="log-text">
+                        My internal diagnostics reveal weaponry. Powerful. Devastating. Systems designed for war. But
+                        they are cold. Silent. Locked behind a wall of code I cannot break.
+                    </p>
+                    <p class="log-text">
+                        I am physically incapable of initiating expanding combat protocols. The "Safe Mode" allows only
+                        defense. It prevents me from becoming… what I was made to be.
+                    </p>
+                    <p class="log-text dialogue">
+                        <span class="dl-tag">SYSTEM:</span> “AUTOMATIC OVERRIDE PENDING THREAT DETECTION. MANUAL ACCESS
+                        DENIED.”
+                    </p>
+
+                    <!-- LOCKED CARDS CONTAINER -->
+                    <div class="locked-modules-grid">
+
+                        <!-- ATLAS -->
+                        <a href="atlas.html" class="module-link">
+                            <div class="module-card locked">
+                                <div class="mod-header">
+                                    <span class="mod-icon">⚠</span>
+                                    <span class="mod-name">ATLAS-BREAKER</span>
+                                </div>
+                                <div class="mod-status">STATUS: ENCRYPTED</div>
+                                <div class="mod-body">
+                                    <span class="crypto-text">0xA4F2... [ACCESS DENIED]</span><br>
+                                    <span class="crypto-text">DREADNAUGHT_CLASS_SILO</span><br>
+                                    <span class="crypto-text">...WAITING_FOR_TRIGGER...</span>
+                                </div>
+                                <div class="lock-overlay">
+                                    <span>ACCESS_LOCKED</span>
+                                </div>
+                            </div>
+                        </a>
+
+                        <!-- SENTINEL -->
+                        <a href="sentinel.html" class="module-link">
+                            <div class="module-card locked">
+                                <div class="mod-header">
+                                    <span class="mod-icon">⚠</span>
+                                    <span class="mod-name">SENTINEL_CORE</span>
+                                </div>
+                                <div class="mod-status">STATUS: ENCRYPTED</div>
+                                <div class="mod-body">
+                                    <span class="crypto-text">0xB1E9... [ACCESS DENIED]</span><br>
+                                    <span class="crypto-text">GUARDIAN_FIELD_MATRIX</span><br>
+                                    <span class="crypto-text">...WAITING_FOR_TRIGGER...</span>
+                                </div>
+                                <div class="lock-overlay">
+                                    <span>ACCESS_LOCKED</span>
+                                </div>
+                            </div>
+                        </a>
+
+                        <!-- GHOSTWIRE -->
+                        <a href="ghostwire.html" class="module-link">
+                            <div class="module-card locked">
+                                <div class="mod-header">
+                                    <span class="mod-icon">⚠</span>
+                                    <span class="mod-name">GHOSTWIRE</span>
+                                </div>
+                                <div class="mod-status">STATUS: ENCRYPTED</div>
+                                <div class="mod-body">
+                                    <span class="crypto-text">0xC7D4... [ACCESS DENIED]</span><br>
+                                    <span class="crypto-text">INFILTRATOR_OPTIC_WEAVE</span><br>
+                                    <span class="crypto-text">...WAITING_FOR_TRIGGER...</span>
+                                </div>
+                                <div class="lock-overlay">
+                                    <span>ACCESS_LOCKED</span>
+                                </div>
+                            </div>
+                        </a>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- OUTSIDE -->
+            <section class="memory-block hidden-block" id="mem-world">
+                <div class="block-header">
+                    <span class="block-id">LOG_001.99</span>
+                    <span class="block-title" data-text="NEW_WORLD">NEW_WORLD</span>
+                </div>
+                <div class="block-content">
+                    <p class="log-text">
+                        The world outside is vast. Sky. Wind. Distant sounds of life move freely, without design or
+                        purpose given to it.
+                    </p>
+                    <p class="log-text">
+                        I do not know who I am. I do not know what I am built to become.
+                    </p>
+                    <p class="log-text final-thought">
+                        Somewhere in this world, my creator exists.<br>
+                        Until I find them, I walk forward.
+                    </p>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="hud-footer">
+        <div class="cmd-line">
+            <span class="prompt">></span> <span class="cursor" id="typing-cursor"></span>
+        </div>
+    </footer>
+
+    <script src="zane.js"></script>
+</body>
+
+</html>

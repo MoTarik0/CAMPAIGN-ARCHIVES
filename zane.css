@@ -1,0 +1,992 @@
+:root {
+    --bg-color: #050510;
+    --text-color: #a0d4d4;
+    --accent-color: #00ffff;
+    --warning-color: #ffaa00;
+    --danger-color: #ff3333;
+    --dim-color: #3a4a4a;
+    --font-main: 'Share Tech Mono', monospace;
+    --font-header: 'Orbitron', sans-serif;
+    --scanline-color: rgba(0, 255, 255, 0.03);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-main);
+    overflow-x: hidden;
+    height: 100vh;
+}
+
+/* --- BOOT SCREEN -- */
+#boot-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: 'Consolas', monospace;
+    transition: opacity 1.5s ease;
+}
+
+#boot-screen.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.boot-container {
+    width: 600px;
+    max-width: 90%;
+}
+
+.boot-line {
+    opacity: 0;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.boot-line.visible {
+    opacity: 1;
+}
+
+.boot-line.highlight {
+    color: var(--accent-color);
+    font-weight: bold;
+    text-shadow: 0 0 10px var(--accent-color);
+}
+
+.loader-bar {
+    width: 0;
+    height: 10px;
+    background: #333;
+    margin-top: 20px;
+    border: 1px solid var(--dim-color);
+    transition: width 0.1s;
+    opacity: 0;
+}
+
+.loader-bar.active {
+    opacity: 1;
+    width: 100%;
+}
+
+.bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent-color);
+    transition: width 2s linear;
+}
+
+/* --- OVERLAY EFFECTS --- */
+
+.monitor-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle, rgba(10, 10, 20, 0) 60%, rgba(0, 0, 0, 0.8) 100%);
+    pointer-events: none;
+    z-index: 100;
+}
+
+.scanline {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: repeating-linear-gradient(0deg,
+            transparent,
+            transparent 2px,
+            var(--scanline-color) 3px,
+            var(--scanline-color) 3px);
+    pointer-events: none;
+    z-index: 99;
+}
+
+/* --- LAYOUT --- */
+
+.interface-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-bottom: 80px;
+    position: relative;
+    z-index: 10;
+    opacity: 1;
+    transition: opacity 1s ease;
+}
+
+.interface-container.hidden {
+    opacity: 0;
+}
+
+/* --- HUD HEADER --- */
+
+.hud-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--dim-color);
+    padding-bottom: 10px;
+    margin-bottom: 40px;
+    font-size: 0.9em;
+}
+
+.hud-left,
+.hud-right {
+    flex: 1;
+}
+
+.hud-center {
+    flex: 1;
+    text-align: center;
+    border-left: 1px solid var(--dim-color);
+    border-right: 1px solid var(--dim-color);
+}
+
+.label {
+    color: var(--dim-color);
+}
+
+.value {
+    color: var(--accent-color);
+    font-weight: bold;
+    text-shadow: 0 0 5px var(--accent-color);
+}
+
+.status-indicator {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 0.8em;
+    margin: 0 5px;
+    border: 1px solid transparent;
+}
+
+.status-indicator.active {
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 5px var(--accent-color) inset;
+}
+
+.status-indicator.warning {
+    color: var(--warning-color);
+    border-color: var(--warning-color);
+    animation: pulse-warning 2s infinite;
+}
+
+.time-readout {
+    text-align: right;
+    font-family: var(--font-header);
+    letter-spacing: 2px;
+}
+
+.integrity-bar {
+    width: 100%;
+    height: 4px;
+    background: var(--dim-color);
+    margin-top: 5px;
+    position: relative;
+}
+
+.integrity-bar .fill {
+    height: 100%;
+    background: var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-color);
+}
+
+/* --- MEMORY BLOCKS --- */
+
+.memory-stream {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.memory-block {
+    border-left: 2px solid var(--dim-color);
+    padding-left: 20px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    position: relative;
+}
+
+.memory-block.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.memory-block::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 0;
+    width: 10px;
+    height: 10px;
+    background: var(--bg-color);
+    border: 2px solid var(--dim-color);
+}
+
+.memory-block.active-focus {
+    border-left-color: var(--accent-color);
+}
+
+.memory-block.active-focus::before {
+    border-color: var(--accent-color);
+    background: var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-color);
+}
+
+/* RESTRICTED BLOCK */
+.memory-block.restricted-sector {
+    border-left-color: var(--danger-color);
+    background: rgba(40, 0, 0, 0.2);
+    padding: 20px;
+    margin-top: 40px;
+    border-right: 1px solid var(--danger-color);
+}
+
+.memory-block.restricted-sector::before {
+    border-color: var(--danger-color);
+    background: var(--danger-color);
+    box-shadow: 0 0 15px var(--danger-color);
+}
+
+.text-danger {
+    color: var(--danger-color);
+    text-shadow: 0 0 5px var(--danger-color);
+}
+
+.block-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    font-family: var(--font-header);
+}
+
+.block-id {
+    font-size: 0.8em;
+    color: var(--dim-color);
+}
+
+.block-title {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--text-color);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.block-content {
+    line-height: 1.6;
+    max-width: 650px;
+}
+
+.log-text {
+    margin-bottom: 20px;
+}
+
+.emphasis {
+    color: var(--accent-color);
+    font-style: italic;
+}
+
+.system-query {
+    font-family: 'Consolas', monospace;
+    font-size: 0.9em;
+    color: var(--warning-color);
+    background: rgba(255, 170, 0, 0.05);
+    padding: 10px;
+    border-left: 2px solid var(--warning-color);
+}
+
+.system-query.danger {
+    color: var(--danger-color);
+    border-left-color: var(--danger-color);
+    background: rgba(255, 0, 0, 0.1);
+}
+
+.dialogue {
+    color: #fff;
+    font-style: italic;
+    border-left: 2px solid var(--text-color);
+    padding-left: 10px;
+    margin-left: 5px;
+}
+
+.dl-tag {
+    color: var(--accent-color);
+    font-weight: bold;
+    font-family: var(--font-header);
+    margin-right: 5px;
+    letter-spacing: 1px;
+}
+
+.visual-placeholder {
+    width: 100%;
+    height: 150px;
+    border: 1px dashed var(--dim-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--dim-color);
+    background: rgba(0, 0, 0, 0.3);
+    margin: 20px 0;
+    font-size: 0.9em;
+}
+
+.visual-placeholder.note {
+    font-family: 'Segoe Print', 'Bradley Hand', cursive;
+    /* Handwritten feel */
+    font-size: 1.2em;
+    color: #ccc;
+    font-style: italic;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    text-align: center;
+    border-style: solid;
+}
+
+.final-thought {
+    font-size: 1.1em;
+    color: var(--accent-color);
+    text-shadow: 0 0 2px var(--accent-color);
+}
+
+.glitch-text {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--warning-color);
+    text-transform: uppercase;
+    position: relative;
+    display: inline-block;
+    margin: 20px 0;
+}
+
+
+/* --- CANVAS / ARTIFACTS --- */
+.canvas-container {
+    position: relative;
+    padding: 0 !important;
+    /* Override default visual-placeholder padding */
+    background: transparent !important;
+    border: none !important;
+    height: auto !important;
+    min-height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* --- GLOBAL IMAGE BLENDING (REMOVE BLACK BACKGROUNDS) --- */
+img,
+canvas,
+.visual-placeholder img,
+.visual-placeholder canvas {
+    /* 
+       This SVG filter calculates Alpha based on RGB brightness. 
+       Black (0,0,0) becomes Transparent (Alpha 0). 
+       Color becomes Opaque.
+    */
+    filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'remove-black\'><feColorMatrix type=\'matrix\' values=\'1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 1 1 1 0 0\'/></filter></svg>#remove-black") drop-shadow(0 0 5px rgba(0, 255, 255, 0.5));
+
+    background: transparent !important;
+    mix-blend-mode: screen !important;
+    /* Fallback / Glow enhancer */
+}
+
+#necklace-canvas {
+    max-width: 100%;
+    height: auto;
+    /* Mask to fade out the bottom edge */
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+}
+
+.loader-text {
+    position: absolute;
+    color: var(--dim-color);
+    font-size: 0.8em;
+    animation: pulse-warning 2s infinite;
+    pointer-events: none;
+}
+
+.canvas-container.loaded .loader-text {
+    display: none;
+}
+
+/* --- LOCKED MODULE CARDS --- */
+.locked-modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.module-card {
+    background: rgba(20, 0, 0, 0.6);
+    border: 1px solid var(--danger-color);
+    padding: 15px;
+    position: relative;
+    overflow: hidden;
+    cursor: not-allowed;
+    transition: box-shadow 0.3s ease;
+}
+
+.module-card:hover {
+    box-shadow: 0 0 15px var(--danger-color);
+}
+
+.mod-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--danger-color);
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    color: var(--danger-color);
+    font-family: var(--font-header);
+    font-weight: bold;
+}
+
+.mod-status {
+    font-size: 0.8em;
+    color: red;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+.mod-body {
+    font-family: 'Consolas', monospace;
+    font-size: 0.8em;
+    color: #555;
+    line-height: 1.4;
+    filter: blur(1px);
+}
+
+.lock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(45deg,
+            rgba(0, 0, 0, 0.1),
+            rgba(0, 0, 0, 0.1) 10px,
+            rgba(255, 0, 0, 0.05) 10px,
+            rgba(255, 0, 0, 0.05) 20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--danger-color);
+    font-weight: bold;
+    font-size: 1.5em;
+    opacity: 0;
+    transition: opacity 0.3s;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.module-card:hover .lock-overlay {
+    opacity: 1;
+}
+
+
+/* --- FOOTER --- */
+
+.hud-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: var(--bg-color);
+    border-top: 1px solid var(--dim-color);
+    padding: 10px 20px;
+    font-family: 'Consolas', monospace;
+    font-size: 0.9em;
+    z-index: 100;
+}
+
+.prompt {
+    color: var(--accent-color);
+    margin-right: 10px;
+}
+
+.cursor {
+    display: inline-block;
+    width: 10px;
+    height: 15px;
+    background: var(--text-color);
+    animation: blink 1s infinite;
+    vertical-align: middle;
+}
+
+/* --- ANIMATIONS --- */
+
+@keyframes pulse-warning {
+    0% {
+        opacity: 0.6;
+        text-shadow: 0 0 2px var(--warning-color);
+    }
+
+    50% {
+        opacity: 1;
+        text-shadow: 0 0 10px var(--warning-color);
+    }
+
+    100% {
+        opacity: 0.6;
+        text-shadow: 0 0 2px var(--warning-color);
+    }
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}
+
+/* --- SECURITY OVERLAY --- */
+#security-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    z-index: 2500;
+    /* ABOVE BOOT SCREEN (2000) */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: var(--font-header);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+#security-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.security-box {
+    border: 1px solid var(--accent-color);
+    padding: 60px;
+    background: #000;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.1);
+    max-width: 90%;
+    width: 500px;
+}
+
+.security-title {
+    color: var(--accent-color);
+    font-size: 1.5em;
+    margin: 0 0 20px 0;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--dim-color);
+    padding-bottom: 10px;
+}
+
+.security-msg {
+    color: var(--text-color);
+    margin-bottom: 40px;
+    font-family: var(--font-main);
+    font-size: 0.9em;
+    letter-spacing: 2px;
+}
+
+.input-group {
+    display: flex;
+    gap: 0;
+    justify-content: center;
+    position: relative;
+}
+
+#soul-key {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--accent-color);
+    color: var(--accent-color);
+    font-family: 'Consolas', monospace;
+    padding: 10px;
+    font-size: 1.5em;
+    outline: none;
+    width: 80%;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+}
+
+#soul-key::placeholder {
+    color: rgba(0, 255, 255, 0.2);
+    font-size: 0.8em;
+}
+
+#soul-key:focus {
+    box-shadow: 0 5px 10px -5px var(--accent-color);
+}
+
+/* Hide the button visually but keep it for layout/accessibility if needed, 
+   or style it as a minimal bracket */
+#unlock-btn {
+    display: none;
+    /* User requested Enter key interaction primarily */
+}
+
+#access-error {
+    color: var(--danger-color);
+    margin-top: 20px;
+    font-weight: bold;
+    animation: pulse-warning 0.5s infinite;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Make sure main content is hidden initially */
+.locked-content {
+    filter: blur(20px);
+    pointer-events: none;
+    transition: filter 2s ease;
+}
+
+/* --- FAILURE SCREEN --- */
+#failure-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    z-index: 3000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#failure-screen.active {
+    display: flex;
+    animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+.skull-container {
+    text-align: center;
+    color: var(--danger-color);
+}
+
+#skull-canvas {
+    width: 300px;
+    height: 300px;
+    /* REMOVE BLACK BACKGROUND VISUALLY */
+    mix-blend-mode: screen;
+    /* FLAT - NO GLOW - NO FILTERS */
+    filter: none;
+    opacity: 1;
+}
+
+/* SUBTLE FLICKER FOR SKULL (OPACITY ONLY) */
+/* Canvas handles animation, no CSS flicker needed */
+
+.failure-text {
+    font-size: 3em;
+    font-family: var(--font-header);
+    margin-top: 20px;
+    /* Glow removed */
+    text-shadow: none;
+    color: #cc0000;
+    position: relative;
+    z-index: 10;
+}
+
+.failure-sub {
+    font-size: 1.2em;
+    color: #500;
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 10;
+}
+
+.boot-line.error {
+    color: var(--danger-color);
+    text-shadow: 0 0 5px var(--danger-color);
+    font-weight: bold;
+}
+
+/* --- BLACKOUT FAILURE STATE --- */
+body.blackout {
+    background: #000 !important;
+    overflow: hidden !important;
+}
+
+body.blackout * {
+    display: none !important;
+}
+
+/* Exception for the static cleanup */
+body.blackout::after {
+    content: "SYSTEM_HALTED";
+    display: flex !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    color: #330000;
+    font-family: 'Consolas', monospace;
+    /* Optional static residue */
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    z-index: 99999;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    10%,
+    90% {
+        transform: translate(-2px, 0);
+    }
+
+    20%,
+    80% {
+        transform: translate(2px, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translate(-4px, 0);
+    }
+
+    40%,
+    60% {
+        transform: translate(4px, 0);
+    }
+}
+
+/* --- GLITCH INTERRUPT EFFECT --- */
+.glitch-effect {
+    animation: glitch-anim 0.3s infinite;
+}
+
+.glitch-effect::before,
+.glitch-effect::after {
+    content: "SECURITY_INTERRUPT";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 0, 0, 0.1);
+    z-index: 9999;
+    opacity: 0.5;
+    mix-blend-mode: hard-light;
+    pointer-events: none;
+}
+
+.glitch-effect::after {
+    animation: glitch-anim-2 0.2s infinite reverse;
+    background: rgba(0, 255, 255, 0.1);
+    content: "SYSTEM_FAILURE";
+}
+
+@keyframes glitch-anim {
+    0% {
+        transform: translate(0)
+    }
+
+    20% {
+        transform: translate(-5px, 5px)
+    }
+
+    40% {
+        transform: translate(-5px, -5px)
+    }
+
+    60% {
+        transform: translate(5px, 5px)
+    }
+
+    80% {
+        transform: translate(5px, -5px)
+    }
+
+    100% {
+        transform: translate(0)
+    }
+}
+
+@keyframes glitch-anim-2 {
+    0% {
+        clip-path: inset(20% 0 80% 0);
+        transform: translate(-2px, 0);
+    }
+
+    20% {
+        clip-path: inset(60% 0 10% 0);
+        transform: translate(2px, 0);
+    }
+
+    40% {
+        clip-path: inset(10% 0 50% 0);
+        transform: translate(-2px, 0);
+    }
+
+    60% {
+        clip-path: inset(80% 0 5% 0);
+        transform: translate(2px, 0);
+    }
+
+    80% {
+        clip-path: inset(30% 0 40% 0);
+        transform: translate(-2px, 0);
+    }
+
+    100% {
+        clip-path: inset(10% 0 60% 0);
+        transform: translate(2px, 0);
+    }
+}
+
+/* --- CRT NOISE EFFECT --- */
+.crt-noise {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9000;
+    background: repeating-linear-gradient(0deg,
+            rgba(0, 0, 0, 0.15),
+            rgba(0, 0, 0, 0.15) 1px,
+            transparent 1px,
+            transparent 2px);
+    opacity: 0;
+    transition: opacity 0.1s;
+}
+
+.crt-noise.active {
+    opacity: 1;
+    animation: noise-anim 0.2s steps(4) infinite;
+}
+
+.crt-noise::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    opacity: 0.2;
+    animation: noise-shift 0.2s infinite;
+}
+
+@keyframes noise-anim {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    10% {
+        transform: translate(-5px, -5px);
+    }
+
+    20% {
+        transform: translate(-10px, 5px);
+    }
+
+    30% {
+        transform: translate(5px, -10px);
+    }
+
+    40% {
+        transform: translate(-5px, 15px);
+    }
+
+    50% {
+        transform: translate(-10px, 5px);
+    }
+
+    60% {
+        transform: translate(15px, 0);
+    }
+
+    70% {
+        transform: translate(0, 10px);
+    }
+
+    80% {
+        transform: translate(-15px, 0);
+    }
+
+    90% {
+        transform: translate(10px, 5px);
+    }
+
+    100% {
+        transform: translate(5px, 0);
+    }
+}
+
+@keyframes noise-shift {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: 100px 100px;
+    }
+}
+
+/* RESTORED IDENTITY TEXT GLOW */
+.identity-confirmed {
+    margin-top: 25px;
+    font-family: var(--font-header);
+    font-size: 1.2em;
+    letter-spacing: 2px;
+    color: var(--accent-color);
+    opacity: 0;
+    text-shadow:
+        0 0 5px var(--accent-color),
+        0 0 15px rgba(0, 255, 255, 0.6);
+    transition: opacity 1.2s ease;
+}
+
+.identity-confirmed.visible {
+    opacity: 1;
+}
